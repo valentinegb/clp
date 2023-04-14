@@ -31,6 +31,10 @@
 //! It's particularly useful on Windows, which has a notoriously inaccurate `sleep` function.
 //! If you notice that [`TypewriterPrint`] or [`TypewriterPrintStyledContent`] is slower than expected,
 //! you should enable the `spin_sleep` feature.
+//!
+//! ```bash
+//! cargo add clp -F spin_sleep
+//! ```
 
 #![warn(missing_docs)]
 

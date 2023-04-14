@@ -35,3 +35,7 @@ If you notice that [`TypewriterPrint`](https://docs.rs/clp/latest/clp/struct.Typ
 or [`TypewriterPrintStyledContent`](https://docs.rs/clp/latest/clp/struct.TypewriterPrintStyledContent.html)
 is slower than expected,
 you should enable the `spin_sleep` feature.
+
+```bash
+cargo add clp -F spin_sleep
+```
