@@ -107,6 +107,16 @@ macro_rules! slide {
 /// Commands must be executed/queued for execution
 /// (which [`TypewriterPrint`] is when in [`slide`])
 /// otherwise they do nothing.
+///
+/// # Examples
+///
+/// ```no_run
+/// use clp::{slide, TypewriterPrint};
+/// use std::time::Duration;
+///
+/// slide!(TypewriterPrint("Hello, world!", Duration::from_millis(25)))
+///     .expect("each character of \"Hello, world!\" should be printed in 25ms intervals");
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TypewriterPrint<T: Display>(pub T, pub Duration);
 
@@ -149,6 +159,20 @@ impl<T: Display> Display for TypewriterPrint<T> {
 /// Commands must be executed/queued for execution
 /// (which [`TypewriterPrintStyledContent`] is when in [`slide`])
 /// otherwise they do nothing.
+///
+/// # Examples
+///
+/// ```no_run
+/// use clp::crossterm::style::Stylize;
+/// use clp::{slide, TypewriterPrintStyledContent};
+/// use std::time::Duration;
+///
+/// slide!(TypewriterPrintStyledContent(
+///     "Hello, world!".bold(),
+///     Duration::from_millis(25)
+/// ))
+/// .expect("each character of \"Hello, world!\" should be printed in 25ms intervals");
+/// ```
 #[derive(Debug, Clone, Copy)]
 pub struct TypewriterPrintStyledContent<D: Display>(pub StyledContent<D>, pub Duration);
 
