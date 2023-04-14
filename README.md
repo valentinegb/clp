@@ -2,6 +2,8 @@
 
 Simple library for creating "command line presentations".
 
+![](resources/clp_presentation.mp4)
+
 Presentations are composed with the [`slide`](https://docs.rs/clp/latest/clp/macro.slide.html) macro, like so:
 
 ```rust
