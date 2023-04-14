@@ -29,7 +29,7 @@ slide!(TypewriterPrint(
 ## Features
 
 This package has one feature: `spin_sleep`. It enables the `spin_sleep` dependency,
-which is a more accurate drop-in replacement for the [`sleep`] function.
+which is a more accurate drop-in replacement for the [`sleep`](https://doc.rust-lang.org/1.68.2/std/thread/fn.sleep.html) function.
 It's particularly useful on Windows, which has a notoriously inaccurate `sleep` function.
 If you notice that [`TypewriterPrint`](https://docs.rs/clp/latest/clp/struct.TypewriterPrint.html)
 or [`TypewriterPrintStyledContent`](https://docs.rs/clp/latest/clp/struct.TypewriterPrintStyledContent.html)
