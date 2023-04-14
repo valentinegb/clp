@@ -104,7 +104,9 @@ macro_rules! slide {
 
 /// A command that prints the given displayable type, one character at a time.
 ///
-/// Commands must be executed/queued for execution otherwise they do nothing.
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrint`] is when in [`slide`])
+/// otherwise they do nothing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TypewriterPrint<T: Display>(pub T, pub Duration);
 
@@ -144,7 +146,9 @@ impl<T: Display> Display for TypewriterPrint<T> {
 ///
 /// # Notes
 ///
-/// Commands must be executed/queued for execution otherwise they do nothing.
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrintStyledContent`] is when in [`slide`])
+/// otherwise they do nothing.
 #[derive(Debug, Clone, Copy)]
 pub struct TypewriterPrintStyledContent<D: Display>(pub StyledContent<D>, pub Duration);
 
