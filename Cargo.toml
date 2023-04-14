@@ -1,0 +1,16 @@
+[package]
+name = "clp"
+version = "0.1.0"
+authors = ["valentinegb"]
+edition = "2021"
+description = "Simple library for creating \"command line presentations\"."
+repository = "https://github.com/valentinegb/clp"
+license = "MIT"
+keywords = ["presentation", "slides", "cli", "terminal"]
+categories = ["command-line-interface", "command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossterm = "0.26.1"
+spin_sleep = { version = "1.1.1", optional = true }
