@@ -2,7 +2,7 @@
 
 Simple library for creating "command line presentations".
 
-https://user-images.githubusercontent.com/35977727/232160088-d7951189-af00-4eab-a912-be090da3e243.mp4
+<img width="1170" height="916" src="https://user-images.githubusercontent.com/35977727/232160088-d7951189-af00-4eab-a912-be090da3e243.mp4">
 
 Presentations are composed with the [`slide`](https://docs.rs/clp/latest/clp/macro.slide.html) macro, like so:
 
