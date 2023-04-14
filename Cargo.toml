@@ -1,6 +1,6 @@
 [package]
 name = "clp"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["valentinegb"]
 edition = "2021"
 description = "Simple library for creating \"command line presentations\"."
