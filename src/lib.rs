@@ -23,6 +23,14 @@
 //! ))
 //! .expect("the second slide should appear");
 //! ```
+//!
+//! # Features
+//!
+//! This package has one feature: `spin_sleep`. It enables the `spin_sleep` dependency,
+//! which is a more accurate drop-in replacement for the [`sleep`] function.
+//! It's particularly useful on Windows, which has a notoriously inaccurate `sleep` function.
+//! If you notice that [`TypewriterPrint`] or [`TypewriterPrintStyledContent`] is slower than expected,
+//! you should enable the `spin_sleep` feature.
 
 #![warn(missing_docs)]
 
