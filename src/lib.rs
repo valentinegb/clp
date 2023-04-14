@@ -1,6 +1,6 @@
 //! Simple library for creating "command line presentations".
 //!
-//! ![](https://raw.githubusercontent.com/valentinegb/clp/master/resources/clp_presentation.mp4)
+//! https://user-images.githubusercontent.com/35977727/232160088-d7951189-af00-4eab-a912-be090da3e243.mp4
 //!
 //! Presentations are composed with the [`slide`] macro, like so:
 //!
