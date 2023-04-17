@@ -22,7 +22,7 @@ slide!(
 .expect("the first slide should appear");
 
 slide!(TypewriterPrint(
-    "...there isn't much content on these slides.",
+    "\n...there isn't much content on these slides.",
     Duration::from_millis(25),
 ))
 .expect("the second slide should appear");
