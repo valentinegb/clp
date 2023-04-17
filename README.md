@@ -7,8 +7,8 @@ Simple library for creating "command line presentations".
 Presentations are composed with the [`slide`](https://docs.rs/clp/latest/clp/macro.slide.html) macro, like so:
 
 ```rust
-use clp::crossterm::style::{Print, Stylize};
-use clp::{slide, TypewriterPrint, TypewriterPrintStyledContent};
+use clp::{crossterm, slide, TypewriterPrint, TypewriterPrintStyledContent};
+use crossterm::style::{Print, Stylize};
 use std::time::Duration;
 
 slide!(
