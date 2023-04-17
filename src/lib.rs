@@ -5,8 +5,8 @@
 //! Presentations are composed with the [`slide`] macro, like so:
 //!
 //! ```no_run
-//! use clp::crossterm::style::{Print, Stylize};
-//! use clp::{slide, TypewriterPrint, TypewriterPrintStyledContent};
+//! use clp::{crossterm, slide, TypewriterPrint, TypewriterPrintStyledContent};
+//! use crossterm::style::{Print, Stylize};
 //! use std::time::Duration;
 //!
 //! slide!(
@@ -61,8 +61,8 @@ use std::time::Duration;
 /// # Examples
 ///
 /// ```no_run
-/// use clp::crossterm::style::{Print, Stylize};
-/// use clp::{slide, TypewriterPrint, TypewriterPrintStyledContent};
+/// use clp::{crossterm, slide, TypewriterPrint, TypewriterPrintStyledContent};
+/// use crossterm::style::{Print, Stylize};
 /// use std::time::Duration;
 ///
 /// slide!(
@@ -159,8 +159,8 @@ impl<T: Display> Display for TypewriterPrint<T> {
 /// # Examples
 ///
 /// ```no_run
-/// use clp::crossterm::style::Stylize;
-/// use clp::{slide, TypewriterPrintStyledContent};
+/// use clp::{crossterm, slide, TypewriterPrintStyledContent};
+/// use crossterm::style::Stylize;
 /// use std::time::Duration;
 ///
 /// slide!(TypewriterPrintStyledContent(
@@ -223,8 +223,8 @@ impl Display for TypewriterPrintStyledContent<&'static str> {
 /// # Examples
 ///
 /// ```no_run
-/// use clp::crossterm::style::Print;
-/// use clp::slide;
+/// use clp::{crossterm, slide};
+/// use crossterm::style::Print;
 ///
 /// slide!(
 ///     Print("This will appear immediately.\n"),
@@ -259,6 +259,56 @@ impl Command for WaitForInteraction {
                 }
             }
         }
+
+        if is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+            disable_raw_mode().expect("raw mode should disable");
+        }
+
+        Ok(())
+    }
+
+    #[cfg(windows)]
+    fn execute_winapi(&self) -> crossterm::Result<()> {
+        Ok(())
+    }
+}
+
+/// A command that waits for the specified duration before executing subsequent commands.
+///
+/// # Examples
+///
+/// ```no_run
+/// use clp::{crossterm, slide, WaitFor};
+/// use crossterm::style::Print;
+/// use std::time::Duration;
+///
+/// slide!(
+///     Print("This will appear immediately.\n"),
+///     WaitFor(Duration::from_secs(5)),
+///     Print("This will appear after 5 seconds."),
+/// )
+/// .unwrap();
+/// ```
+///
+/// # Notes
+///
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrint`] is when in [`slide`])
+/// otherwise they do nothing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WaitFor(pub Duration);
+
+impl Command for WaitFor {
+    fn write_ansi(&self, _f: &mut impl fmt::Write) -> fmt::Result {
+        stdout()
+            .flush()
+            .expect("standard output stream should flush");
+
+        if !is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+            enable_raw_mode().expect("raw mode should enable");
+        }
+
+        sleep(self.0);
 
         if is_raw_mode_enabled().expect("should check if raw mode is enabled") {
             disable_raw_mode().expect("raw mode should disable");
