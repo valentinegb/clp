@@ -29,13 +29,14 @@ fn main() {
 
     slide!(
         TypewriterPrint(
-            "\
+            "
 Command line presentations, like this one, are like presentations you'd make in Keynote or PowerPoint or Google Slides, \
 except it all runs in a terminal!
 
 Since this is a terminal, you can only print text, however, you can easily do something like this:\n",
             Duration::from_millis(20),
         ),
+        WaitForInteraction,
         TypewriterPrint(
             artem::convert(
                 image::load_from_memory(include_bytes!("../resources/valentinegb_avatar.jpeg"))
@@ -50,7 +51,7 @@ Since this is a terminal, you can only print text, however, you can easily do so
     .expect("should play image demonstration slide");
 
     slide!(TypewriterPrint(
-        "\
+        "
 In case you couldn't tell, that was ASCII art of my GitHub avatar, converted at runtime. \
 In terminals that support it, it should've been colored, too!
 

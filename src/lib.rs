@@ -42,7 +42,9 @@
 
 pub use crossterm;
 
+use crossterm::event::{self, Event, KeyCode};
 use crossterm::style::{PrintStyledContent, StyledContent, Stylize};
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode, is_raw_mode_enabled};
 use crossterm::Command;
 #[cfg(feature = "spin_sleep")]
 use spin_sleep::sleep;
@@ -81,38 +83,17 @@ use std::time::Duration;
 /// ```
 #[macro_export]
 macro_rules! slide {
-    ($($command:tt)*) => {{
-        use clp::crossterm::execute;
-        use clp::crossterm::terminal::{Clear, ClearType};
-        use clp::crossterm::event::{read, Event, KeyCode};
-        use clp::crossterm::ErrorKind;
+    ($($command:expr),* $(,)?) => {{
+        use $crate::crossterm::execute;
+        use $crate::crossterm::terminal::{Clear, ClearType};
+        use $crate::WaitForInteraction;
         use std::io::stdout;
 
-        let mut result = Ok(());
-
-        match execute!(stdout(), Clear(ClearType::All), $($command)*) {
-            Ok(_) => loop {
-                match read() {
-                    Ok(event) => if let Event::Key(key) = event {
-                        if let KeyCode::Enter | KeyCode::Right | KeyCode::Char(' ') = key.code {
-                            break;
-                        }
-                    },
-                    Err(error) => result = Err(error),
-                }
-            },
-            Err(error) => result = Err(error),
-        }
-
-        result
+        execute!(stdout(), Clear(ClearType::All), $($command,)* WaitForInteraction)
     }}
 }
 
 /// A command that prints the given displayable type, one character at a time.
-///
-/// Commands must be executed/queued for execution
-/// (which [`TypewriterPrint`] is when in [`slide`])
-/// otherwise they do nothing.
 ///
 /// # Examples
 ///
@@ -123,6 +104,12 @@ macro_rules! slide {
 /// slide!(TypewriterPrint("Hello, world!", Duration::from_millis(25)))
 ///     .expect("each character of \"Hello, world!\" should be printed in 25ms intervals");
 /// ```
+///
+/// # Notes
+///
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrint`] is when in [`slide`])
+/// otherwise they do nothing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TypewriterPrint<T: Display>(pub T, pub Duration);
 
@@ -133,7 +120,16 @@ impl<T: Display> Command for TypewriterPrint<T> {
             stdout()
                 .flush()
                 .expect("standard output stream should flush");
+
+            if !is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+                enable_raw_mode().expect("raw mode should enable");
+            }
+
             sleep(self.1);
+
+            if is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+                disable_raw_mode().expect("raw mode should disable");
+            }
         }
 
         Ok(())
@@ -160,12 +156,6 @@ impl<T: Display> Display for TypewriterPrint<T> {
 ///
 /// See [`StyledContent`] for more info.
 ///
-/// # Notes
-///
-/// Commands must be executed/queued for execution
-/// (which [`TypewriterPrintStyledContent`] is when in [`slide`])
-/// otherwise they do nothing.
-///
 /// # Examples
 ///
 /// ```no_run
@@ -179,6 +169,12 @@ impl<T: Display> Display for TypewriterPrint<T> {
 /// ))
 /// .expect("each character of \"Hello, world!\" should be printed in 25ms intervals");
 /// ```
+///
+/// # Notes
+///
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrintStyledContent`] is when in [`slide`])
+/// otherwise they do nothing.
 #[derive(Debug, Clone, Copy)]
 pub struct TypewriterPrintStyledContent<D: Display>(pub StyledContent<D>, pub Duration);
 
@@ -189,7 +185,16 @@ impl<D: Display> Command for TypewriterPrintStyledContent<D> {
             stdout()
                 .flush()
                 .expect("standard output stream should flush");
+
+            if !is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+                enable_raw_mode().expect("raw mode should enable");
+            }
+
             sleep(self.1);
+
+            if is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+                disable_raw_mode().expect("raw mode should disable");
+            }
         }
 
         Ok(())
@@ -210,5 +215,60 @@ impl Display for TypewriterPrintStyledContent<String> {
 impl Display for TypewriterPrintStyledContent<&'static str> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         PrintStyledContent(self.0.clone()).fmt(f)
+    }
+}
+
+/// A command that waits for user interaction before executing subsequent commands.
+///
+/// # Examples
+///
+/// ```no_run
+/// use clp::crossterm::style::Print;
+/// use clp::slide;
+///
+/// slide!(
+///     Print("This will appear immediately.\n"),
+///     WaitForInteraction, // <- This command is used within the macro, so it does not need to be binded again
+///     Print("This will appear after an interaction."),
+/// )
+/// .expect("one message should print, then the other should print after an interaction");
+/// ```
+///
+/// # Notes
+///
+/// Commands must be executed/queued for execution
+/// (which [`TypewriterPrint`] is when in [`slide`])
+/// otherwise they do nothing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct WaitForInteraction;
+
+impl Command for WaitForInteraction {
+    fn write_ansi(&self, _f: &mut impl fmt::Write) -> fmt::Result {
+        stdout()
+            .flush()
+            .expect("standard output stream should flush");
+
+        if !is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+            enable_raw_mode().expect("raw mode should enable");
+        }
+
+        loop {
+            if let Event::Key(key) = event::read().expect("should read event") {
+                if let KeyCode::Enter | KeyCode::Right | KeyCode::Char(' ') = key.code {
+                    break;
+                }
+            }
+        }
+
+        if is_raw_mode_enabled().expect("should check if raw mode is enabled") {
+            disable_raw_mode().expect("raw mode should disable");
+        }
+
+        Ok(())
+    }
+
+    #[cfg(windows)]
+    fn execute_winapi(&self) -> crossterm::Result<()> {
+        Ok(())
     }
 }
