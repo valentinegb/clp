@@ -56,7 +56,7 @@ use std::time::Duration;
 
 /// Defines a slide and shows it.
 ///
-/// Takes any number of [`crossterm::Command`]s as arguments.
+/// Takes any number of [`Command`]s as arguments.
 ///
 /// # Examples
 ///
@@ -228,7 +228,7 @@ impl Display for TypewriterPrintStyledContent<&'static str> {
 ///
 /// slide!(
 ///     Print("This will appear immediately.\n"),
-///     WaitForInteraction, // <- This command is used within the macro, so it does not need to be binded again
+///     WaitForInteraction, // <- This command is used within the macro, so it does not need to be bound again
 ///     Print("This will appear after an interaction."),
 /// )
 /// .expect("one message should print, then the other should print after an interaction");
