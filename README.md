@@ -1,3 +1,8 @@
+### Archival Notice
+This project was straightforward and I worked on it for a few days. I won't be making any more changes. Feel free to fork it.
+
+---
+
 # clp
 
 Simple library for creating "command line presentations".
